@@ -1,4 +1,4 @@
-MYSQL_KEYWORD_SEARCH = """
+MYSQL_KEYWORD_SEARCH_QUERY = """
     SELECT flm.film_id, flm.title, flm.release_year flm.description,
            cat.name
     FROM film flm
@@ -8,7 +8,7 @@ MYSQL_KEYWORD_SEARCH = """
     LIMIT 10 OFFSET %s
 """
 
-MYSQL_GENRE_AND_YEAR_SEARCH = """
+MYSQL_GENRE_AND_YEAR_SEARCH_QUERY = """
     SELECT flm.film_id, flm.title, flm.release_year flm.description,
            cat.name
     FROM film flm
