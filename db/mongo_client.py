@@ -30,10 +30,10 @@ def save_query_info(collection, document: dict):
 
 
 @check_mongo_connection
-def get_five_most_popular_queries(collection, get_five_most_popular_queries_pipeline):
-    return collection.aggregate(get_five_most_popular_queries_pipeline)
+def get_five_last_queries(collection, get_five_last_queries_pipeline):
+    return collection.aggregate(get_five_last_queries_pipeline)
 
 
 @check_mongo_connection
-def get_five_last_queries(collection, get_five_last_queries_pipeline):
-    return collection.aggregate(get_five_last_queries_pipeline)
+def get_five_most_popular_queries(collection, get_five_most_popular_queries_pipeline):
+    return collection.aggregate(get_five_most_popular_queries_pipeline)

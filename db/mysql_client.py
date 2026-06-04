@@ -22,7 +22,7 @@ def check_mysql_connection(func):
 @check_mysql_connection
 def search_by_keyword(connection, keyword_search_query, keyword, offset):
     with connection.cursor() as cursor:
-        cursor.execute(keyword_search_query, (keyword, offset))
+        cursor.execute(keyword_search_query, (f"%{keyword}%", offset))
         result = cursor.fetchall()
     return result
 
