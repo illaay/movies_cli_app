@@ -18,13 +18,13 @@ MYSQL_GENRE_AND_YEAR_SEARCH_QUERY = """
     LIMIT 10 OFFSET %s
 """
 
-MYSQL_GET_AVAILABLE_GENRES = """
+MYSQL_GET_AVAILABLE_GENRES_QUERY = """
     SELECT name
     FROM category
     ORDER BY name
 """
 
-MYSQL_GET_AVAILABLE_YEARS_RANGE = """
+MYSQL_GET_AVAILABLE_YEARS_RANGE_QUERY = """
     SELECT min(release_year) as min_release_year, max(release_year) as max_year
     FROM film
 """
