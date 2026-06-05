@@ -1,12 +1,13 @@
 """MySQL database client for establishing connections and executing movie lookups."""
 
 import pymysql
+import typing
 from functools import wraps
 from pymysql.cursors import DictCursor
 from errors import MySQLConnectionError
 
 
-def create_mysql_connection(config_dict):
+def create_mysql_connection(config_dict: dict) -> pymysql.Connection:
     """
     Open a live connection to the MySQL database server.
 
@@ -17,7 +18,7 @@ def create_mysql_connection(config_dict):
     return pymysql.connect(**config_dict, cursorclass=DictCursor)
 
 
-def check_mysql_connection(func):
+def check_mysql_connection(func: callable) -> callable:
     """
     Ensure the database connection is active before calling the operation.
 
@@ -26,7 +27,7 @@ def check_mysql_connection(func):
     """
 
     @wraps(func)
-    def wrapper(connection, *args, **kwargs):
+    def wrapper(connection: pymysql.Connection, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
         try:
             connection.ping(reconnect=True)
         except (pymysql.OperationalError, pymysql.InterfaceError):
@@ -36,7 +37,8 @@ def check_mysql_connection(func):
 
 
 @check_mysql_connection
-def search_by_keyword(connection, keyword_search_query, keyword, offset):
+def search_by_keyword(connection: pymysql.Connection, keyword_search_query: str,
+                      keyword: str, offset: int) -> list[dict]:
     """
     Execute fuzzy text search on movie records with pagination.
 
@@ -54,7 +56,8 @@ def search_by_keyword(connection, keyword_search_query, keyword, offset):
 
 
 @check_mysql_connection
-def search_by_genre_and_year(connection, genre_year_search_query, genre, years: tuple, offset):
+def search_by_genre_and_year(connection: pymysql.Connection, genre_year_search_query: str,
+                             genre, years: tuple, offset: int) -> list[dict]:
     """
     Filter movie records by genre classification and release year span.
 
@@ -73,7 +76,7 @@ def search_by_genre_and_year(connection, genre_year_search_query, genre, years: 
 
 
 @check_mysql_connection
-def get_available_genres(connection, available_genres_query):
+def get_available_genres(connection: pymysql.Connection, available_genres_query: str) -> list[dict]:
     """
     Retrieve all valid movie categories stored in the system.
 
@@ -89,7 +92,7 @@ def get_available_genres(connection, available_genres_query):
 
 
 @check_mysql_connection
-def get_available_years_range(connection, available_years_range_query):
+def get_available_years_range(connection: pymysql.Connection, available_years_range_query: str) -> list[dict]:
     """
     Fetch systemic lower and upper release year boundaries.
 

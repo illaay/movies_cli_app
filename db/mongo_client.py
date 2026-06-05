@@ -1,12 +1,13 @@
 """MongoDB client module for managing connections, saving logs, and executing analytics aggregation."""
 
 import pymongo
+import typing
 from functools import wraps
 from pymongo.errors import ConnectionFailure
 from errors import MongoDBConnectionError
 
 
-def create_mongo_connection(config_dict):
+def create_mongo_connection(config_dict: dict) -> pymongo.collection.Collection:
     """
     Establish a connection and verify active link with MongoDB.
 
@@ -22,7 +23,7 @@ def create_mongo_connection(config_dict):
         raise MongoDBConnectionError("Ошибка подключения к MongoDB-серверу")
 
 
-def check_mongo_connection(func):
+def check_mongo_connection(func: callable) -> callable:
     """
     Ensure the database connection is active via double execution attempt.
 
@@ -31,7 +32,7 @@ def check_mongo_connection(func):
     """
 
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
         for _ in range(2):
             try:
                 return func(*args, **kwargs)
@@ -41,7 +42,7 @@ def check_mongo_connection(func):
     return wrapper
 
 @check_mongo_connection
-def save_query_info(collection, document: dict):
+def save_query_info(collection: pymongo.collection.Collection, document: dict):
     """
     Insert a processed query document record into history logs.
 
@@ -54,7 +55,8 @@ def save_query_info(collection, document: dict):
 
 
 @check_mongo_connection
-def get_five_last_queries(collection, get_five_last_queries_pipeline):
+def get_five_last_queries(collection: pymongo.collection.Collection,
+                          get_five_last_queries_pipeline: dict) -> pymongo.command_cursor.CommandCursor:
     """
     Fetch five most recent search requests from collection logs.
 
@@ -67,7 +69,8 @@ def get_five_last_queries(collection, get_five_last_queries_pipeline):
 
 
 @check_mongo_connection
-def get_five_most_popular_queries(collection, get_five_most_popular_queries_pipeline):
+def get_five_most_popular_queries(collection: pymongo.collection.Collection,
+                                  get_five_most_popular_queries_pipeline: dict) -> pymongo.command_cursor.CommandCursor:
     """
     Aggregate and retrieve top five most frequent lookup requests.
 

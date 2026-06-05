@@ -1,4 +1,5 @@
 import logging
+import typing
 from functools import wraps
 
 
@@ -10,9 +11,9 @@ logging.basicConfig(
 )
 
 
-def logger(func):
+def logger(func: callable) -> callable:
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
         try:
             res = func(*args, **kwargs)
             logging.info("Completed successfully")
@@ -23,9 +24,9 @@ def logger(func):
     return wrapper
 
 
-def log_info(message):
+def log_info(message: str) -> None:
     logging.info(message)
 
 
-def log_critical(message):
+def log_critical(message: str) -> None:
     logging.critical(message, exc_info=True)

@@ -11,7 +11,7 @@ from errors import ApplicationCrushError
 
 
 @log_utils.logger
-def keyword_search(connection, collection, search_query):
+def keyword_search(connection, collection, search_query: str) -> None:
     """
     Manage the movie search flow by a user-provided keyword with pagination.
 
@@ -72,7 +72,8 @@ def keyword_search(connection, collection, search_query):
 
 
 @log_utils.logger
-def genre_and_year_search(connection, collection, search_query, get_genres_query, get_available_years_query):
+def genre_and_year_search(connection, collection, search_query: str, get_genres_query: str,
+                          get_available_years_query: str) -> None:
     """
     Filter movie records by selecting a valid genre and a specific release year range.
 
@@ -166,7 +167,8 @@ def genre_and_year_search(connection, collection, search_query, get_genres_query
 
 
 @log_utils.logger
-def five_last_and_popular_queries(collection, five_last_queries_query, five_most_popular_queries_query):
+def five_last_and_popular_queries(collection, five_last_queries_query: dict,
+                                  five_most_popular_queries_query: dict) -> None:
     """
     Retrieve and present recent user search logs and top frequent aggregation statistics.
 
@@ -188,7 +190,7 @@ def five_last_and_popular_queries(collection, five_last_queries_query, five_most
 
 
 
-def run_app():
+def run_app() -> None:
     mysql_conn = mysql_client.create_mysql_connection(config.MYSQL_CONFIG)
     mongo_coll = mongo_client.create_mongo_connection(config.MONGO_CONFIG)
     log_utils.log_info("Application launched and databases connected successfully")

@@ -60,8 +60,6 @@ A high-performance Command Line Interface (CLI) application designed for searchi
 ```text
 movies-cli-app/
 │
-├── .venv/                   # Isolated virtual environment directory
-│
 ├── db/
 │   ├── __init__.py          # Database package initializer exposing clients
 │   ├── mysql_client.py      # Connection manager and parameterized lookup queries

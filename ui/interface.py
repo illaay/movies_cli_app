@@ -3,7 +3,7 @@
 from tabulate import tabulate
 
 
-def show_main_menu():
+def show_main_menu() -> None:
     """
     Render the main navigation menu with available system actions.
 
@@ -19,7 +19,7 @@ def show_main_menu():
                    tablefmt="fancy_grid"))
 
 
-def show_keyword_search_screen():
+def show_keyword_search_screen() -> None:
     """
     Display the header and input instructions for keyword-based search.
 
@@ -31,7 +31,7 @@ def show_keyword_search_screen():
                    tablefmt="fancy_grid"))
 
 
-def show_genre_and_years_range_search_screen(genres, years_range):
+def show_genre_and_years_range_search_screen(genres: tuple, years_range: tuple) -> None:
     """
     Display available filter constraints and usage examples for genre search.
 
@@ -53,7 +53,7 @@ def show_genre_and_years_range_search_screen(genres, years_range):
                    tablefmt="fancy_grid"))
 
 
-def show_history_screen(five_last_queries, five_most_popular_queries):
+def show_history_screen(five_last_queries: tuple[dict], five_most_popular_queries: tuple[dict]) -> None:
     """
     Present comparative statistics tables for recent and frequent queries.
 
@@ -73,7 +73,7 @@ def show_history_screen(five_last_queries, five_most_popular_queries):
     print("╘═══════════════════════════════════════════════════════════════════════╛")
 
 
-def show_search_result(rows):
+def show_search_result(rows: list[dict]) -> None:
     """
     Render current page movie rows in a grid alongside absolute summary count.
 
