@@ -1,43 +1,55 @@
+from tabulate import tabulate
+
+
 def show_main_menu():
-    print(f"Главное меню. Выбор пункта:",
-          "1. Поиск по названию",
-          "2. Поиск по жанру и году выпуска",
-          "3. История",
-          "4. Выход", sep="\n")
+    actions = [["[k] / [keyword]: Keyword search"],
+               ["[g] / [genre]: Genre and release year search"],
+               ["[h] / [history]: Five most recent\nand five most popular queries"],
+               ["[e] / [exit]: Exit app"]]
+    print(tabulate(actions,
+                   headers=["\nWelcome to movie search app!\nSelect an action below\n"],
+                   tablefmt="fancy_grid"))
 
 
 def show_keyword_search_screen():
-    print("Поиск по ключевому слову")
+    print(tabulate([["Example input:\n\nEnter a keyword: duck"]],
+                   headers=[f"\nKeyword search menu\n"],
+                   tablefmt="fancy_grid"))
 
 
-def show_keyword_search_result(rows): # вынести в отдельную функцию с show_genre_and_years_range_result
-    print("Результат поиска по ключевому слову:")
-    if rows:
-        for row in rows:
-            print(row)
-    else:
-        print("Запросов больше нет")
-
-
-def show_genre_and_years_range_screen(genres, years_range):
-    print("Поиск по жанру и году",
-          "Доступные жанры: ",
-          *genres,
-          "Доступные годы: ",
-          years_range, sep="\n")
-
-
-def show_genre_and_years_range_result(rows):  # вынести в отдельную функцию с show_keyword_search_result
-    print("Результат поиска по жанру и году:")  # print("Результат поиска по {search_type}")
-    if rows:
-        for row in rows:
-            print(row)
-    else:
-        print("Запросов больше нет")
+def show_genre_and_years_range_search_screen(genres, years_range):
+    genres_and_years = [[f"Available genres:\n{"".join(f"{genre}\n" for genre in genres)}"],
+                        [f"Available years:\n{" - ".join(f"{year}" for year in years_range)}"],
+                        ["""Example input:
+                        Enter a genre: foreign
+                        Enter a year range: 2005 2007
+                        or
+                        Enter a release year a year range: 2006"""]]
+    print(tabulate(genres_and_years,
+                   headers=[f"\nGenre and release year\nsearch menu\n"],
+                   tablefmt="fancy_grid"))
 
 
 def show_history_screen(five_last_queries, five_most_popular_queries):
-    print("5 последних запросов: ",
-          *five_last_queries,
-          "5 самых популярных запросов: ",
-          *five_most_popular_queries, sep="\n")
+    formatted_recent_queries = tuple("\n".join(f"{k}: {v}" for k, v in row.items())
+                                     for row in five_last_queries)
+    formatted_most_popular_queries = tuple("\n".join(f"{k}: {v}" for k, v in row.items())
+                                           for row in five_most_popular_queries)
+    print(tabulate(list(zip(formatted_recent_queries, formatted_most_popular_queries)),
+                    headers=["Five most recent queries: ", "Five most popular queries: "],
+                   tablefmt="fancy_grid"))
+    print("│ [b] / [back]: Back to menu")
+    print("╘═══════════════════════════════════════════════════════════════════════╛")
+
+
+def show_search_result(rows):
+    total_rows_count = rows[0]["total_rows_count"]
+    clear_rows = [{k: v for k, v in row.items() if k != "total_rows_count"}
+                  for row in rows] + [{"id": "","title": "","release_year": "",
+                                       "name": "Total rows count:","description": total_rows_count}]
+    print(tabulate(clear_rows,
+                   headers="keys",
+                   maxcolwidths=[None, None, None, None, None, 30],
+                   tablefmt="fancy_grid"))
+    print("│ [n] / [next]: Next page   [p] / [previous]: Previous page\n│ [b] / [back]: Back to menu")
+    print("╘═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╛")
