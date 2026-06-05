@@ -1,5 +1,3 @@
-"""Настройки подключения к базе данных с фильмами (MySQL) и базе данных для логирования (MongoDB)"""
-
 import os
 from dotenv import load_dotenv
 

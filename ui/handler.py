@@ -1,12 +1,25 @@
+"""Application controller module that coordinates user navigation, search flows, and database interactions."""
+
 import config
+import log_utils
 from ui import interface
 from db import queries
 from db import mysql_client
 from db import mongo_client
 from datetime import datetime
+from errors import ApplicationCrushError
 
 
+@log_utils.logger
 def keyword_search(connection, collection, search_query):
+    """
+    Manage the movie search flow by a user-provided keyword with pagination.
+
+    :param connection: Active MySQL database connection instance.
+    :param collection: Active MongoDB history collection instance.
+    :param search_query: Parameterized SQL query string for keyword lookup.
+    :return: None
+    """
 
     interface.show_keyword_search_screen()
     while True:
@@ -58,7 +71,18 @@ def keyword_search(connection, collection, search_query):
             break
 
 
+@log_utils.logger
 def genre_and_year_search(connection, collection, search_query, get_genres_query, get_available_years_query):
+    """
+    Filter movie records by selecting a valid genre and a specific release year range.
+
+    :param connection: Active MySQL database connection instance.
+    :param collection: Active MongoDB history collection instance.
+    :param search_query: Parameterized SQL query string for genre and year filtering.
+    :param get_genres_query: SQL query string to fetch available genres.
+    :param get_available_years_query: SQL query string to fetch systemic min and max years.
+    :return: None
+    """
 
     genres_tuple = tuple(row["name"] for row in mysql_client.get_available_genres(connection, get_genres_query))
     available_years = mysql_client.get_available_years_range(connection, get_available_years_query)
@@ -104,9 +128,6 @@ def genre_and_year_search(connection, collection, search_query, get_genres_query
     while True:
         offset = (page_number - 1) * 10
 
-        # если в кэш сохранен результат поиска - берем данные оттуда
-        # иначе делаем новый запрос и сохраняем в кэш
-        # после условия отображаем результат
         if page_number in search_cache:
             search_result = search_cache[page_number]
         else:
@@ -144,7 +165,16 @@ def genre_and_year_search(connection, collection, search_query, get_genres_query
             break
 
 
+@log_utils.logger
 def five_last_and_popular_queries(collection, five_last_queries_query, five_most_popular_queries_query):
+    """
+    Retrieve and present recent user search logs and top frequent aggregation statistics.
+
+    :param collection: Active MongoDB history collection instance.
+    :param five_last_queries_query: MongoDB aggregation pipeline for recent logs.
+    :param five_most_popular_queries_query: MongoDB aggregation pipeline for popularity stats.
+    :return: None
+    """
 
     five_last_queries = tuple(mongo_client.get_five_last_queries(collection, five_last_queries_query))
     five_most_popular_queries = tuple(mongo_client.get_five_most_popular_queries(collection, five_most_popular_queries_query))
@@ -161,8 +191,8 @@ def five_last_and_popular_queries(collection, five_last_queries_query, five_most
 def run_app():
     mysql_conn = mysql_client.create_mysql_connection(config.MYSQL_CONFIG)
     mongo_coll = mongo_client.create_mongo_connection(config.MONGO_CONFIG)
-    # временный try-except для отслеживания неожиданных ошибок
-    # потом надо убрать, заменить на логгер
+    log_utils.log_info("Application launched and databases connected successfully")
+
     try:
         while True:
             interface.show_main_menu()
@@ -188,5 +218,6 @@ def run_app():
                 case _:
                     print("Incorrect input, please try again")
     except Exception as e:
+        log_utils.log_critical("Critical application failure occurred")
         mysql_conn.close()
-        raise Exception from e
+        raise ApplicationCrushError("A critical error caused the application to terminate") from e
